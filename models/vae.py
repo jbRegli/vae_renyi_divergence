@@ -7,7 +7,7 @@ from loss_functions import reconstruction_loss
 from loss_functions import log_prior
 
 
-def variational_lowerbound(x, encoder, decoder, num_samples, batch_size, \
+def variational_lowerbound(x, encoder, decoder, num_samples, batch_size,
                            alpha=1.0, backward_pass='full'):
     """
     Compute the loss function of VR lower bound
@@ -57,18 +57,18 @@ def variational_lowerbound(x, encoder, decoder, num_samples, batch_size, \
     return lowerbound  # , logpz, logpxz, logqzx
 
 
-def make_functions_vae(models, input_size, num_samples, batch_size, \
+def make_functions_vae(models, input_size, num_samples, batch_size,
                        alpha=1.0, backward_pass='full'):
     encoder, decoder = models
 
     input = tf.placeholder(tf.float32, [batch_size, input_size])
-    lowerbound = variational_lowerbound(input, encoder, decoder, num_samples, batch_size, \
+    lowerbound = variational_lowerbound(input, encoder, decoder, num_samples, batch_size,
                                         alpha, backward_pass)
 
     learning_rate_ph = tf.placeholder(tf.float32, shape=[])
     optimizer = \
-        tf.train.AdamOptimizer(learning_rate=learning_rate_ph, \
-                               beta1=0.9, beta2=0.999, epsilon=10e-8 \
+        tf.train.AdamOptimizer(learning_rate=learning_rate_ph,
+                               beta1=0.9, beta2=0.999, epsilon=10e-8
                                ).minimize(-lowerbound)
 
     def updateParams(sess, X, learning_rate=0.0005):
@@ -93,8 +93,8 @@ def init_optimizer(models, input_size, batch_size=100, num_samples=1, **kwargs):
     else:
         backward_pass = kwargs['backward_pass']
     updateParams, lowerbound = \
-        make_functions_vae(models, input_size, \
-                           num_samples, batch_size, \
+        make_functions_vae(models, input_size,
+                           num_samples, batch_size,
                            alpha, backward_pass)
 
     def fit(sess, X, n_iter=100, learning_rate=0.0005, verbose=True):

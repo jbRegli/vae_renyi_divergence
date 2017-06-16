@@ -87,7 +87,7 @@ def main(dataset, dimZ, hidden_layers, n_iters, learning_rate=0.0005,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run RVAE experiments.')
-    parser.add_argument('--data', '-D', type=str, default='freyface')
+    parser.add_argument('--data', '-D', type=str, default='silhouettes')
     parser.add_argument('--num_layers', '-l', type=int, choices=[1, 2], default=1)
     parser.add_argument('--num_samples', '-k', type=int, default=1)
     parser.add_argument('--alpha', '-a', type=float, default=1.0)
