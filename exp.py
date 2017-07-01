@@ -29,10 +29,25 @@ def main(dataset, dimZ, hidden_layers, n_iters, learning_rate=0.0005,
     variables_size = [data_train.shape[1], dimZ]
 
     # TODO: other training methods coming soon...
+    if backward_pass == 'max':
+        loss = 'vrmax'
     if loss == 'vae':
         kwargs = {'alpha': alpha, 'backward_pass': backward_pass}
         print 'training model: variational auto-encoder'
+        print 'back propagating all the samples'
         from models.vae import init_optimizer
+    if loss == 'vrmax':
+        kwargs = {'alpha': alpha, 'backward_pass': backward_pass}
+        print 'training model: VAE with alpha = -infty'
+        print 'back propagating only 1 sample: using the max trick'
+        from models.vrmax import init_optimizer
+    if loss == 'iwae':
+        kwargs = {'alpha': alpha}
+        print 'training model: IWAE style training with alpha = %.2f' % alpha
+        print 'gradient is first computed on every samples,',
+        print 'then averaged with importance weights (smoothed by alpha)',
+        print 'see the VR bound paper, section 4.2 for details.'
+        from models.iwae import init_optimizer
 
     # Create encoder and decoder:
     models = init_model(variables_size, hidden_layers, data_type, activation)
@@ -55,6 +70,8 @@ def main(dataset, dimZ, hidden_layers, n_iters, learning_rate=0.0005,
         # init = tf.initialize_all_variables()
         sess.run(init)
     checkpoint += 1
+
+    # sess.graph.finalize()
 
     num_iter_trained = 0
     print "Training..."
